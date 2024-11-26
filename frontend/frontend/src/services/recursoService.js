@@ -28,6 +28,7 @@ const updateRecurso = (id, data, token) => {
 
 //Función que realiza una solicitud DELETE al servidor para eliminar el recurso de la BD
 const deleteRecurso = (id, token) => {
+  console.log("id del recurso a eliminar AXIOS DELETE:",id);
   return axios.delete(`${API_URL}/eliminar/${id}`, {
     //Se usa el token para la autenticación
     headers: { Authorization: `Bearer ${token}` },

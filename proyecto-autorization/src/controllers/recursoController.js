@@ -7,7 +7,7 @@ const recursoModel=require("../models/recursoModel");
 const crear=async(req,res)=>{
     
     //Obtengo los datos pasados por parámetros
-    const {tipo_recurso,configuracion,estado}=req.body.recurso; //,id_usuario
+    const {tipo_recurso,configuracion,estado}=req.body; //,id_usuario       //req.body.recurso
     const id_usuario=req.usuario.id; //Se obtiene el id del usuario ya autenticado
     console.log(tipo_recurso,configuracion,estado,id_usuario);
 
@@ -75,6 +75,8 @@ const eliminar=async(req,res)=>{
     try{
         //Obtengo el id del producto a eliminar (parámetro de la ruta dinámica)
         const {id}=req.params;
+
+        console.log("id:",id);
 
         //Ahora, hago la consulta a la base de datos mediante la función definida en recursoModel
         const respuesta=await recursoModel.eliminarRecurso(id);
