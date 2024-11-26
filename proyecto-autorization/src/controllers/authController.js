@@ -14,9 +14,13 @@ const {crearUsuario,encontrarUsuarioPorEmail}=require('../models/usuarioModel');
 
 //Esta será la función manejadora de solicitudes
 const registrar = async (req, res) => {
-    
+    //console.log("Llamada a registrar desde el frontend");
     //Se realiza desestructuración, pues se pasarán dichos datos mediante POST
     const {nombre,email,contrasenia,rol}=req.body;
+    /*console.log("nombre:",nombre);
+    console.log("email:",email);
+    console.log("email:",contrasenia);
+    console.log("email:",rol);*/
 
     //Se encripta la contraseña, y dicha contraseña encriptada será la que se almacena en la BD, no el texto plano
     try {
@@ -30,6 +34,7 @@ const registrar = async (req, res) => {
 
         //Cuando se ha realizado correctamente lo anterior, se envía el cód 201, que indica "recurso creado" con un json que mostrará
         //los datos
+        
         res.status(201).json({usuario:nuevoUsuario});
     }catch (error){
         //En caso haya algún error, se enviará el status code 500 con el mensaje de Error
@@ -38,8 +43,13 @@ const registrar = async (req, res) => {
 };
 
 const login = async (req, res) => {
+    console.log("Se llama al login desde el frontend!!");
+
     //Se obtienen los datos que se envían mediante el método POST
     const {email,contrasenia} = req.body;
+
+    console.log("email:",email);
+    console.log("contrasenia:",contrasenia);
 
 
     //Se busca dicho usuario en la base de datos usando la función que se definió anteriormente "encontrarUsuarioPorEmail"

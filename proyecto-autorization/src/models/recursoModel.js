@@ -1,22 +1,16 @@
-//acá se deben definir las acciones que se realizarán sobre el recurso.
-//puede ser crear, eliminar, solicitar, etc, recursos por nombre, etc (Acá se hacen las consultas y se devolverán valores)
-//tipo INSERT INTO usuarios (nombre,email,contrasenia,rol) VALUES ($1,$2,$3,$4) RETURNING *',
-
-//hay 2 tablas --> recursos, usuarios
-
 //Se importa el cliente de la BD para insertar valores
 const pool=require("../config/dbConfig");
 
 //Esta función se encargará de insertar recursos a la BD
 const crearRecurso=async (tipo_recurso,configuracion,estado,id_usuario)=>{
-    //console.log("recursoModel crearrecurso entró");
+    
     //Se hace la consulta de insertar recursos a la tabla
     const resultado=await pool.query(
         'INSERT INTO recursos (tipo_recurso,configuracion,estado,id_usuario) VALUES ($1,$2,$3,$4) RETURNING *',
         [tipo_recurso,configuracion,estado,id_usuario]
     );
 
-    //console.log("resultado crearRecurso:",resultado.rows[0]);
+    
     //Se retorna el recurso creado
     return resultado.rows[0];
 }

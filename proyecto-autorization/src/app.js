@@ -12,9 +12,16 @@ const authRoutes=require("./routes/authRoutes");
 //Para las rutas de los recursos
 const recursoRoutes=require("./routes/recursoRoutes");
 
+//CORS
+const cors=require("cors");
+
 
 //Instancia para tener el servidor
 const app=express();
+
+//Middleware CORS
+app.use(cors());
+
 
 //Uso el middleware para leer los datos json que se envían desde el cliente
 app.use(express.json());

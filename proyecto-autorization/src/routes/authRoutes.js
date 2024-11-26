@@ -9,11 +9,11 @@ const router=express.Router();
 const {registrar,login}=require("../controllers/authController");
 
 //Registrar un usuario
-router.post("/register",registrar); //router.post
+router.post("/register",registrar); 
 
 
 //Logearse
-router.post("/login",login); //router.post
+router.post("/login",login);
 
 
 //Exporto el router

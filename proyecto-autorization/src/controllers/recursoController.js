@@ -1,15 +1,3 @@
-//Con el token obtenido, se pueden crear recursos 
-
-
-//GESTIÓN DE RECURSOS: Permitir a usuarios autenticados crear, ver, actualizar y eliminar recursos según su rol.
-//acá se usaría el middleware de autenticación "autenticar, autorizar" de authMiddleware
-//cuáles son esas opciones? Las siguientes (se especifican en el repo):
-//crearRecurso
-//obtenerRecurso
-//actualizarRecurso
-//eliminarRecurso
-
-
 //Acá uso las funciones definidas en recursoModel!!!
 
 //Importo el recursoModel que tendrá las funciones definidas para realizar las acciones definidas allí
@@ -17,10 +5,7 @@ const recursoModel=require("../models/recursoModel");
 
 //Acá se crea la handler function para crear un recurso
 const crear=async(req,res)=>{
-    /*console.log("Req body:");
-    console.log(req.body);
-    console.log("Req.usuario")
-    console.log(req.usuario);*/
+    
     //Obtengo los datos pasados por parámetros
     const {tipo_recurso,configuracion,estado}=req.body.recurso; //,id_usuario
     const id_usuario=req.usuario.id; //Se obtiene el id del usuario ya autenticado
@@ -104,27 +89,3 @@ const eliminar=async(req,res)=>{
 
 //Exporto estas funciones
 module.exports={crear,obtenerRecTodo,obtenerRecID,actualizar,eliminar};
-
-
-
-//ROLES SEGÚN REPOSITORIO:
-/*
--Administrador
--Operador
--Usuario autenticado
-/*
-
-// Crear recurso - solo Administradores y Operadores
-router.post('/', autorizar(['Administrador', 'Operador']), recursoController.crearRecurso);
-
-// Obtener recursos - cualquier usuario autenticado
-router.get('/', autorizar(), recursoController.obtenerRecursos);
-
-// Actualizar recurso - solo Administradores
-router.put('/:id', autorizar(['Administrador']), recursoController.actualizarRecurso);
-
-// Eliminar recurso - solo Administradores
-router.delete('/:id', autorizar(['Administrador']), recursoController.eliminarRecurso);
-
-module.exports = router;
-*/

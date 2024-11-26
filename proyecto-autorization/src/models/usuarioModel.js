@@ -10,7 +10,6 @@ const crearUsuario=async(nombre,email,contrasenia,rol)=>{
         [nombre,email,contrasenia,rol]
     );
 
-
     //Se devuelve el usuario introducido
     return resultado.rows[0];
 };
@@ -23,7 +22,6 @@ const encontrarUsuarioPorEmail = async (email) => {
       [email]
     );
 
-    //console.log("Resultado de encontrarUsuario:",resultado.rows);
     //Se devuelve ese usuario
     return resultado.rows[0];
   };
