@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import recursoService from '../services/recursoService';
+import RecursoForm from './RecursoForm';
 
 const RecursoList = () => {
   const [recursos, setRecursos] = useState([]);
+  const [recursoIdToUpdate, setRecursoIdToUpdate] = useState(null); // Estado para el recurso a actualizar
 
   useEffect(() => {
     const fetchRecursos = async () => {
@@ -37,7 +39,7 @@ const RecursoList = () => {
       alert('Recurso eliminado exitosamente!');
       setRecursos(recursos.filter((recurso) => recurso.id !== id));
     } catch (error) {
-      alert('Error al eliminar el recurso.');
+      alert('Los operadores no pueden eliminar un recurso');
     }
   };
 
@@ -66,19 +68,14 @@ const RecursoList = () => {
                 <td>{recurso.estado}</td>
                 <td>
                   <button onClick={() => handleDelete(recurso.id)}>Eliminar</button>
-                  <button
-                    onClick={() =>
-                      window.location.href = `/recurso-form/${recurso.id}`
-                    }
-                  >
-                    Actualizar
-                  </button>
+                  <button onClick={() => setRecursoIdToUpdate(recurso.id)}>Actualizar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      {recursoIdToUpdate && <RecursoForm recursoId={recursoIdToUpdate} />}
     </div>
   );
 };

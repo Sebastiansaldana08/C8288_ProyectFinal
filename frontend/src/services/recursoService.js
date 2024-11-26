@@ -35,4 +35,11 @@ const deleteRecurso = (id, token) => {
   });
 };
 
-export default { createRecurso, getRecursos, updateRecurso, deleteRecurso };
+// Obtener un recurso específico por su ID
+const getRecursoById = (id, token) => {
+  return axios.get(`${API_URL}/listar/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export default { createRecurso, getRecursos, getRecursoById, updateRecurso, deleteRecurso };
