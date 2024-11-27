@@ -39,17 +39,35 @@ const obtenerRecursoID=async(id)=>{
     return resultado.rows[0];
 }
 
-//Función para actualizar un recurso (por ID)
-const actualizarRecurso = async(id,tipo_recurso,configuracion,estado) => {
-    //Se realiza la consulta a la BD para actualizar el recurso
-    const resultado = await pool.query(
-        //Acá es donde se hace la actualización de los recursos según los parámetros dados
-        'UPDATE recursos SET tipo_recurso = $2, configuracion = $3, estado = $4 WHERE id = $1 RETURNING *',
-        [id, tipo_recurso, configuracion, estado]
-    );
-    //Se retorna el recurso ya modificado
-    return resultado.rows[0];
+const actualizarRecurso = async (id, tipo_recurso, configuracion, estado) => {
+    // Log de entrada de datos
+    console.log('Iniciando actualización en recursoModel.js...');
+    console.log('Datos recibidos:', { id, tipo_recurso, configuracion, estado });
+  
+    try {
+      // Ejecutar la consulta para actualizar el recurso
+      const recursoActualizado = await pool.query(
+        'UPDATE recursos SET tipo_recurso = $1, configuracion = $2, estado = $3 WHERE id = $4 RETURNING *',
+        [tipo_recurso, configuracion, estado, id]
+      );
+  
+      // Verificar si se actualizó algún recurso
+      if (recursoActualizado.rows.length === 0) {
+        console.error('Error: No se encontró un recurso con el ID proporcionado.');
+        return null;
+      }
+  
+      // Log del recurso actualizado exitosamente
+      console.log('Recurso actualizado en la base de datos:', recursoActualizado.rows[0]);
+  
+      return recursoActualizado.rows[0];
+    } catch (error) {
+      // Log de error en caso de fallo
+      console.error('Error al actualizar el recurso en la base de datos:', error);
+      throw error;
+    }
 };
+  
 
 
 //Función para eliminar un recurso (por ID)

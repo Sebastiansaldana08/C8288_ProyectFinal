@@ -41,27 +41,38 @@ const RecursoForm = ({ recursoId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+  
     if (!token) {
       alert('No estás autenticado. Inicia sesión.');
       window.location.href = '/login';
       return;
     }
-
+  
+    console.log('Token obtenido:', token); // Log para verificar si el token se obtiene correctamente
+    console.log('Formulario enviado:', formData); // Log para verificar los datos que se enviarán
+  
     try {
       if (recursoId) {
         // Actualizar recurso existente
+        console.log('Intentando actualizar recurso con ID:', recursoId); // Log para confirmar el ID del recurso
         await recursoService.updateRecurso(recursoId, formData, token);
         alert('Recurso actualizado exitosamente!');
+        console.log('Recurso actualizado con éxito.');
       } else {
         // Crear nuevo recurso
+        console.log('Creando nuevo recurso con datos:', formData); // Log para confirmar creación
         await recursoService.createRecurso(formData, token);
         alert('Recurso creado exitosamente!');
+        console.log('Recurso creado con éxito.');
       }
+  
       setMostrarRecursoList(true); // Mostrar lista después de crear/actualizar
     } catch (error) {
-      alert('Error al guardar el recurso.');
+      console.error('Error al guardar el recurso:', error); // Log del error recibido
+      alert('Los operadores no pueden actualizar recursos.');
     }
   };
+  
 
   return (
     <div>
