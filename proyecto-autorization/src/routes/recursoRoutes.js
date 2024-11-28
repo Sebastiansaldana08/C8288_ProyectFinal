@@ -12,7 +12,7 @@ router.use((req, res, next) => {
   next();
 });
 
-// Crear un recurso (solo admins y operadores pueden realizar ello)
+// Creamos un recurso (solo admins y operadores pueden realizar ello)
 router.post(
   "/crear",
   autenticar,
