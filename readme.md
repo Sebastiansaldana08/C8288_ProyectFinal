@@ -207,16 +207,16 @@ Se definieron las rutas que conectan las solicitudes del cliente con las funcion
     Cada ruta está protegida por el middleware de autenticación y autorización (autenticar, autorizar) para garantizar el acceso seguro y controlado.
 
 ---
-# FRONTEND:
-## COMPONENTES:
-### USO DE HOOKS:
+## FRONTEND:
+#### DIRECTORIO COMPONENTES:
+##### USO DE HOOKS:
 - **useState**: Este hook es usado en los componentes React para almacenar las respuestas que se introducen mediante los formularios definidos con la sintaxis JSX en variables que luego serán enviadas al servidor para que procese la solicitud mediante métodos HTTP.
 También se está usando useState para crear variables que permitirán mostrar componentes condicionales.
 
 - **useEffect**: Usamos el hook useEffect que nos permitió realizar efectos secundarios en los componentes funcionales. De esta manera, usamos useEffect para realizar solicitudes a la API y, por ende, interactuar con el servidor.
 
 
-## DIRECTORIO 'SERVICES':
+#### DIRECTORIO 'SERVICES':
 En este directorio, se encuentran dos archivos js: authService y recursoService.
 Cada uno de estos archivos contendrán las funciones que se encargarán de realizar solicitudes a la API usando el protocolo HTTP y los métodos correspondiente para realizar acciones específicas y se lleven a cabo en el lado del servidor.
 ```javascript
