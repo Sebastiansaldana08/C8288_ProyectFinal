@@ -219,6 +219,7 @@ También se está usando useState para crear variables que permitirán mostrar c
 #### DIRECTORIO 'SERVICES':
 En este directorio, se encuentran dos archivos js: authService y recursoService.
 Cada uno de estos archivos contendrán las funciones que se encargarán de realizar solicitudes a la API usando el protocolo HTTP y los métodos correspondiente para realizar acciones específicas y se lleven a cabo en el lado del servidor.
+**authService:** Este archivo contendrá las funciones que se encargarán de realizar las llamadas a los endpoints de la API para permitir el registro y login del usuario.
 ```javascript
 import axios from 'axios';
 
@@ -240,4 +241,58 @@ const login = (data) => {
 export default { register, login };
 ```
 
+* En el archivo authService.js usamos axios para realizar las solicitudes HTTP a la API.
+* Almacenamos, en una variable (API_URL), la ruta base, sobre la cual están definidos los endpoints /register y /login de la API.
+*  Las funciones register y login se encargan de enviar una solicitud al servidor a las rutas indicadas.
+*  Finalmente, se exportan las funciones para usarlas en los componentes y se puedan realizar las llamadas al servidor cuando el cliente interactúa con la interfaz de usuario.
 
+-----
+**recursoService:** Este archivo contendrá las funciones que se encargarán de realizar las llamadas a los endpoints de la API para permitir la creación, obtención, actualización y eliminación de los recursos.
+Es decir, aquí estarán definidas las funciones que permitirán gestionar los recursos realizando llamadas a las rutas de la API.
+```javascript
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/recursos';
+
+//Esta de aqui es una función que realiza la solicitud POST al servidor para crear un recurso
+const createRecurso = (data, token) => {
+  return axios.post(`${API_URL}/crear`, data, {
+    //En el header se envía el token almacenado en el localStorage para poder realizar la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funcion que realiza una solicitud GET al servidor para obtener todos los recursos
+const getRecursos = (token) => {
+  return axios.get(`${API_URL}/listar`, {
+    //Se usa el token para la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funsion que realiza una solicitud PUT al servidor para modificar el recurso
+const updateRecurso = (id, data, token) => {
+  //Se usa el token para la autenticación
+  return axios.put(`${API_URL}/actualizar/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funcion que realiza una solicitud DELETE al servidor para eliminar el recurso de la BD
+const deleteRecurso = (id, token) => {
+  console.log("id del recurso a eliminar AXIOS DELETE:",id);
+  return axios.delete(`${API_URL}/eliminar/${id}`, {
+    //Se usa el token para la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Obteneemos un recurso específico por su ID
+const getRecursoById = (id, token) => {
+  return axios.get(`${API_URL}/listar/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export default { createRecurso, getRecursos, getRecursoById, updateRecurso, deleteRecurso };
+```
