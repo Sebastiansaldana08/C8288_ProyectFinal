@@ -207,3 +207,99 @@ Se definieron las rutas que conectan las solicitudes del cliente con las funcion
     Cada ruta está protegida por el middleware de autenticación y autorización (autenticar, autorizar) para garantizar el acceso seguro y controlado.
 
 ---
+## FRONTEND:
+#### DIRECTORIO COMPONENTES:
+##### USO DE HOOKS:
+- **useState**: Este hook es usado en los componentes React para almacenar las respuestas que se introducen mediante los formularios definidos con la sintaxis JSX en variables que luego serán enviadas al servidor para que procese la solicitud mediante métodos HTTP.
+También se está usando useState para crear variables que permitirán mostrar componentes condicionales.
+
+- **useEffect**: Usamos el hook useEffect que nos permitió realizar efectos secundarios en los componentes funcionales. De esta manera, usamos useEffect para realizar solicitudes a la API y, por ende, interactuar con el servidor.
+
+
+#### DIRECTORIO 'SERVICES':
+En este directorio, se encuentran dos archivos js: authService y recursoService.
+Cada uno de estos archivos contendrán las funciones que se encargarán de realizar solicitudes a la API usando el protocolo HTTP y los métodos correspondiente para realizar acciones específicas y se lleven a cabo en el lado del servidor.
+**authService:** Este archivo contendrá las funciones que se encargarán de realizar las llamadas a los endpoints de la API para permitir el registro y login del usuario.
+```javascript
+import axios from 'axios';
+
+// URL base para las solicitudes de autenticación
+const API_URL = 'http://localhost:5000/auth';
+
+// funcionn para registrar un nuevo usuario
+//Acá se realiza una solicitud con  el método post, donde se pasa los datos enviados del formulario, al endpoint de la API para el registro
+const register = (data) => {
+  return axios.post(`${API_URL}/register`, data);
+};
+
+// iniciar sesión de un usuario
+const login = (data) => {
+  return axios.post(`${API_URL}/login`, data);
+};
+
+// Exportar las funciones para usarlas en otros componentes
+export default { register, login };
+```
+
+* En el archivo authService.js usamos axios para realizar las solicitudes HTTP a la API.
+* Almacenamos, en una variable (API_URL), la ruta base, sobre la cual están definidos los endpoints /register y /login de la API.
+*  Las funciones register y login se encargan de enviar una solicitud al servidor a las rutas indicadas.
+*  Finalmente, se exportan las funciones para usarlas en los componentes y se puedan realizar las llamadas al servidor cuando el cliente interactúa con la interfaz de usuario.
+
+-----
+**recursoService:** Este archivo contendrá las funciones que se encargarán de realizar las llamadas a los endpoints de la API para permitir la creación, obtención, actualización y eliminación de los recursos.
+Es decir, aquí estarán definidas las funciones que permitirán gestionar los recursos realizando llamadas a las rutas de la API.
+```javascript
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/recursos';
+
+//Esta de aqui es una función que realiza la solicitud POST al servidor para crear un recurso
+const createRecurso = (data, token) => {
+  return axios.post(`${API_URL}/crear`, data, {
+    //En el header se envía el token almacenado en el localStorage para poder realizar la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funcion que realiza una solicitud GET al servidor para obtener todos los recursos
+const getRecursos = (token) => {
+  return axios.get(`${API_URL}/listar`, {
+    //Se usa el token para la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funsion que realiza una solicitud PUT al servidor para modificar el recurso
+const updateRecurso = (id, data, token) => {
+  //Se usa el token para la autenticación
+  return axios.put(`${API_URL}/actualizar/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// funcion que realiza una solicitud DELETE al servidor para eliminar el recurso de la BD
+const deleteRecurso = (id, token) => {
+  console.log("id del recurso a eliminar AXIOS DELETE:",id);
+  return axios.delete(`${API_URL}/eliminar/${id}`, {
+    //Se usa el token para la autenticación
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Obteneemos un recurso específico por su ID
+const getRecursoById = (id, token) => {
+  return axios.get(`${API_URL}/listar/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export default { createRecurso, getRecursos, getRecursoById, updateRecurso, deleteRecurso };
+```
+* En primer lugar, se guarda en una variable la ruta base.
+* Posteriormente, se crean las funciones para realizar las solicitudes HTTP al servidor:
+  - función **createRecurso**: Se encargará de realizar una solicitud HTTP mediante el método POST a la ruta específica de la API. Aquí es donde el cliente envía en la cabecera de la solicitud, el token que se le fue enviado por el servidor para que se le pueda permitir el acceso a las rutas protegidas. El token es enviado en el header de la solicitud
+  - función **getRecursos**: Realizará una solicitud mediante el método GET a la API y se obtengan los recursos almacenados en la base de datos.
+  - función **updateRecurso**: Recibe como parámetro el 'id' del recurso a actualizar, la 'data' que contendrán los nuevos valores por los que se desea actualizar el recurso, así como el token. Con dichos datos, se realizará una solicitud al servidor mediante el método 'put' para actualizar el recurso.
+  - función **deleteRecurso**: De la misma forma, recibe el 'id' y el token que se recibió por parte del servidor para que este se envíe, posteriormente, en el encabezado de la solicitud y se realice la eliminación del recurso.
+  - función **getRecursoById**: Esta función se encarga de realizar una solicitud GET al servidor para obtener un recurso específico por su ID. 
