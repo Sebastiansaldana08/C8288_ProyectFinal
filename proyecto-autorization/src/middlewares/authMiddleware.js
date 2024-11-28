@@ -30,8 +30,10 @@ const autenticar = (req, res, next) => {
 };
 
 const autorizar = (roles = []) => {
+  // Si se pasa un solo rol como string, se convierte en un array para manejar todos los casos de manera uniforme.
   if (typeof roles === 'string') roles = [roles];
   return [
+    // verifica que el usuario esté autenticado y tenga un token JWT válido.
     autenticar,
     (req, res, next) => {
       if (!roles.length || roles.includes(req.usuario.rol)) {

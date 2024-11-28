@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/recursos';
 
-//Función que realiza la solicitud POST al servidor para crear un recurso
+//Esta de aqui es una función que realiza la solicitud POST al servidor para crear un recurso
 const createRecurso = (data, token) => {
   return axios.post(`${API_URL}/crear`, data, {
     //En el header se envía el token almacenado en el localStorage para poder realizar la autenticación
@@ -10,7 +10,7 @@ const createRecurso = (data, token) => {
   });
 };
 
-//Función que realiza una solicitud GET al servidor para obtener todos los recursos
+// funcion que realiza una solicitud GET al servidor para obtener todos los recursos
 const getRecursos = (token) => {
   return axios.get(`${API_URL}/listar`, {
     //Se usa el token para la autenticación
@@ -18,7 +18,7 @@ const getRecursos = (token) => {
   });
 };
 
-//Función que realiza una solicitud PUT al servidor para modificar el recurso
+// funsion que realiza una solicitud PUT al servidor para modificar el recurso
 const updateRecurso = (id, data, token) => {
   //Se usa el token para la autenticación
   return axios.put(`${API_URL}/actualizar/${id}`, data, {
@@ -26,7 +26,7 @@ const updateRecurso = (id, data, token) => {
   });
 };
 
-//Función que realiza una solicitud DELETE al servidor para eliminar el recurso de la BD
+// funcion que realiza una solicitud DELETE al servidor para eliminar el recurso de la BD
 const deleteRecurso = (id, token) => {
   console.log("id del recurso a eliminar AXIOS DELETE:",id);
   return axios.delete(`${API_URL}/eliminar/${id}`, {
@@ -35,7 +35,7 @@ const deleteRecurso = (id, token) => {
   });
 };
 
-// Obtener un recurso específico por su ID
+// Obteneemos un recurso específico por su ID
 const getRecursoById = (id, token) => {
   return axios.get(`${API_URL}/listar/${id}`, {
     headers: { Authorization: `Bearer ${token}` },

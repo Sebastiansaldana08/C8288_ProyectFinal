@@ -45,24 +45,24 @@ const actualizarRecurso = async (id, tipo_recurso, configuracion, estado) => {
     console.log('Datos recibidos:', { id, tipo_recurso, configuracion, estado });
   
     try {
-      // Ejecutar la consulta para actualizar el recurso
+      // Ejecutamos la consulta para actualizar el recurso
       const recursoActualizado = await pool.query(
         'UPDATE recursos SET tipo_recurso = $1, configuracion = $2, estado = $3 WHERE id = $4 RETURNING *',
         [tipo_recurso, configuracion, estado, id]
       );
   
-      // Verificar si se actualizó algún recurso
+      // Verificamos si se actualizo algun recurso
       if (recursoActualizado.rows.length === 0) {
         console.error('Error: No se encontró un recurso con el ID proporcionado.');
         return null;
       }
   
-      // Log del recurso actualizado exitosamente
+     
       console.log('Recurso actualizado en la base de datos:', recursoActualizado.rows[0]);
   
       return recursoActualizado.rows[0];
     } catch (error) {
-      // Log de error en caso de fallo
+
       console.error('Error al actualizar el recurso en la base de datos:', error);
       throw error;
     }
@@ -70,7 +70,7 @@ const actualizarRecurso = async (id, tipo_recurso, configuracion, estado) => {
   
 
 
-//Función para eliminar un recurso (por ID)
+// funcion para eliminar un recurso (por ID)
 const eliminarRecurso=async(id)=>{
     //Se eliminar ese recurso de la BD
     const resultado=await pool.query(

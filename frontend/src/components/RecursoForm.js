@@ -7,7 +7,7 @@ const RecursoForm = ({ recursoId }) => {
   const [formData, setFormData] = useState({
     tipo_recurso: '',
     configuracion: '',
-    estado: 'Activo', // Estado por defecto
+    estado: 'Activo', 
   });
 
   const [mostrarRecursoList, setMostrarRecursoList] = useState(false);
@@ -24,7 +24,7 @@ const RecursoForm = ({ recursoId }) => {
         }
 
         try {
-          const response = await recursoService.getRecursoById(recursoId, token); // Nueva función en recursoService
+          const response = await recursoService.getRecursoById(recursoId, token);
           setFormData(response.data);
         } catch (error) {
           alert('Error al cargar el recurso.');
@@ -48,27 +48,27 @@ const RecursoForm = ({ recursoId }) => {
       return;
     }
   
-    console.log('Token obtenido:', token); // Log para verificar si el token se obtiene correctamente
-    console.log('Formulario enviado:', formData); // Log para verificar los datos que se enviarán
+    console.log('Token obtenido:', token);
+    console.log('Formulario enviado:', formData);
   
     try {
       if (recursoId) {
         // Actualizar recurso existente
-        console.log('Intentando actualizar recurso con ID:', recursoId); // Log para confirmar el ID del recurso
+        console.log('Intentando actualizar recurso con ID:', recursoId); 
         await recursoService.updateRecurso(recursoId, formData, token);
         alert('Recurso actualizado exitosamente!');
         console.log('Recurso actualizado con éxito.');
       } else {
         // Crear nuevo recurso
-        console.log('Creando nuevo recurso con datos:', formData); // Log para confirmar creación
+        console.log('Creando nuevo recurso con datos:', formData);
         await recursoService.createRecurso(formData, token);
         alert('Recurso creado exitosamente!');
         console.log('Recurso creado con éxito.');
       }
   
-      setMostrarRecursoList(true); // Mostrar lista después de crear/actualizar
+      setMostrarRecursoList(true);
     } catch (error) {
-      console.error('Error al guardar el recurso:', error); // Log del error recibido
+      console.error('Error al guardar el recurso:', error); 
       alert('Los operadores no pueden actualizar recursos.');
     }
   };
