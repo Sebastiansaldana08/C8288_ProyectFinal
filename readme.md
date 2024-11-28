@@ -296,3 +296,10 @@ const getRecursoById = (id, token) => {
 
 export default { createRecurso, getRecursos, getRecursoById, updateRecurso, deleteRecurso };
 ```
+* En primer lugar, se guarda en una variable la ruta base.
+* Posteriormente, se crean las funciones para realizar las solicitudes HTTP al servidor:
+  - función **createRecurso**: Se encargará de realizar una solicitud HTTP mediante el método POST a la ruta específica de la API. Aquí es donde el cliente envía en la cabecera de la solicitud, el token que se le fue enviado por el servidor para que se le pueda permitir el acceso a las rutas protegidas. El token es enviado en el header de la solicitud
+  - función **getRecursos**: Realizará una solicitud mediante el método GET a la API y se obtengan los recursos almacenados en la base de datos.
+  - función **updateRecurso**: Recibe como parámetro el 'id' del recurso a actualizar, la 'data' que contendrán los nuevos valores por los que se desea actualizar el recurso, así como el token. Con dichos datos, se realizará una solicitud al servidor mediante el método 'put' para actualizar el recurso.
+  - función **deleteRecurso**: De la misma forma, recibe el 'id' y el token que se recibió por parte del servidor para que este se envíe, posteriormente, en el encabezado de la solicitud y se realice la eliminación del recurso.
+  - función **getRecursoById**: Esta función se encarga de realizar una solicitud GET al servidor para obtener un recurso específico por su ID. 
