@@ -303,3 +303,8 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
   - función **updateRecurso**: Recibe como parámetro el 'id' del recurso a actualizar, la 'data' que contendrán los nuevos valores por los que se desea actualizar el recurso, así como el token. Con dichos datos, se realizará una solicitud al servidor mediante el método 'put' para actualizar el recurso.
   - función **deleteRecurso**: De la misma forma, recibe el 'id' y el token que se recibió por parte del servidor para que este se envíe, posteriormente, en el encabezado de la solicitud y se realice la eliminación del recurso.
   - función **getRecursoById**: Esta función se encarga de realizar una solicitud GET al servidor para obtener un recurso específico por su ID. 
+
+
+----
+# Evidencias:
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/InicioDeSesionAdmin.JPG)
