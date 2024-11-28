@@ -308,3 +308,15 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 ----
 # Evidencias:
 ![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/InicioDeSesionAdmin.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen2.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen3.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen4.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen5.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen6.JPG)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen7.JPG)
