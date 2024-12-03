@@ -329,52 +329,63 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 ---
 ### Implementación de Pruebas Unitarias para el Controlador de Autenticación
 
-Las pruebas unitarias tienen como objetivo probar una parte específica del sistema, en este caso, el controlador de autenticación (`authController`).
+El objetivo de estas pruebas unitarias es garantizar el correcto funcionamiento de las funcionalidades principales del controlador de autenticación (authController). Estas incluyen:
 
-Usamos mocks para simular el comportamiento de las dependencias (como `bcrypt` y `usuarioModel`) y verificamos que se llamen correctamente con los datos esperados.
-
-Esto permite verificar la lógica de negocio del controlador sin depender de otras partes del sistema, como la base de datos o las herramientas de encriptación.
+- Registrar usuarios: Verificar que un usuario pueda registrarse correctamente en el sistema, con la contraseña encriptada y almacenada en la base de datos.
+- Iniciar sesión: Validar que un usuario existente pueda iniciar sesión, autenticarse con sus credenciales y recibir un token JWT válido.
 
 ### Proceso
-1. Identificación del método a probar
-   - El método `registrar` del controlador de autenticación fue seleccionado como el foco de las pruebas. Este método maneja la lógica para registrar nuevos usuarios en el sistema.
-2. Simulación de dependencias
-Para realizar las pruebas unitarias, se utilizaron mocks para simular las dependencias externas del controlador, incluyendo:
-
-   - bcrypt: Simula la encriptación de contraseñas.
-   - usuarioModel: Representa el modelo que interactúa con la base de datos para registrar usuarios.
-   - jsonwebtoken: Mockeado pero no utilizado directamente en esta prueba.
+1. Configuración de las pruebas
+   Simulación de dependencias:
+      - Se utilizaron mocks (jest.mock) para simular el comportamiento de las dependencias externas:
+        - bcrypt: Para simular la encriptación y verificación de contraseñas.
+        - usuarioModel: Para simular las operaciones de la base de datos relacionadas con usuarios (creación y búsqueda).
+        - jsonwebtoken: Para simular la generación de tokens JWT.
+   - Esto garantiza que las pruebas sean aisladas y no dependan de la funcionalidad real de estas dependencias externas.
   
-    El uso de mocks permite que las pruebas sean independientes de estas dependencias externas y evita efectos secundarios.
+    Datos simulados:
+     - Se configuraron objetos simulados para representar la solicitud (req) y la respuesta (res), permitiendo evaluar cómo el controlador maneja estos datos.
+  
+2. Prueba del método registrar
+Flujo esperado:
 
-3. Creación de datos simulados
-Se simularon tanto la solicitud enviada al controlador (req) como la respuesta esperada (res). Esto incluye:
+   - El controlador recibe datos de un nuevo usuario a través de la solicitud (req.body).
+   - La contraseña del usuario se encripta usando bcrypt.
+   - Los datos del usuario, incluyendo la contraseña encriptada, se envían al modelo para ser almacenados en la base de datos.
+   - El controlador responde con un código HTTP 201 y un objeto JSON con los datos del usuario registrado.
+  
+    Validaciones clave:
 
-   - Datos de entrada: Información del usuario que se desea registrar (nombre, email, contraseña, rol).
-   - Mock de respuesta: Métodos como status y json para simular la respuesta del controlador al cliente.
+     - bcrypt.hash se llama con los parámetros correctos para encriptar la contraseña.
+     - usuarioModel.crearUsuario se llama con los datos adecuados, incluyendo la contraseña encriptada.
+     - La respuesta incluye un código HTTP 201 y un objeto JSON con el usuario registrado.
+3. Prueba del método login
+   Flujo esperado:
 
-4. Ejecución del método
-El método registrar fue ejecutado con los datos simulados. Esto permitió evaluar cómo el controlador maneja el flujo de datos y las interacciones con sus dependencias.
+      - El controlador recibe las credenciales del usuario a través de la solicitud (req.body).
+      - Se busca al usuario en la base de datos utilizando el modelo.
+      - La contraseña proporcionada se compara con la contraseña almacenada encriptada utilizando bcrypt.
+      - Si las credenciales son correctas, se genera un token JWT utilizando jsonwebtoken.
+      - El controlador responde con el token JWT generado.
+  
+    Validaciones clave:
+      - usuarioModel.encontrarUsuarioPorEmail se llama con el correo electrónico proporcionado para buscar al usuario en la base de datos.
+      - bcrypt.compare se llama con la contraseña proporcionada y la almacenada encriptada.
+      - jwt.sign se llama con el payload adecuado (ID y rol del usuario) y la clave secreta (JWT_SECRET).
+      - La respuesta incluye un token JWT válido y no genera errores de autenticación.
+  
+**Verificaciones Realizadas**
+Registro de usuario:
+   - La contraseña se encripta correctamente.
+   - Los datos del usuario se almacenan en la base de datos con el método adecuado.
+   - El controlador responde correctamente al cliente con un objeto JSON que incluye los datos del usuario registrado.
+  
+Inicio de sesión:
+   - El usuario se busca en la base de datos utilizando su correo electrónico.
+   - La contraseña proporcionada se compara correctamente con la contraseña almacenada encriptada.
+   - Se genera un token JWT válido con un tiempo de expiración definido.
+   - El controlador responde al cliente con el token generado.
 
-5. Verificación de comportamiento
-Se realizaron verificaciones para confirmar que:
-
-   - La contraseña se encripta correctamente utilizando bcrypt.
-   - El modelo de usuario guarda los datos correctos con el método crearUsuario.
-   - El controlador responde con un código HTTP 201 al registrar el usuario exitosamente.
-   - La respuesta incluye un objeto JSON con los datos del usuario registrado.
-
-- Configuración adicional
-Archivo de Configuración de Jest
-Se configuró Jest para:
-
-  - Ejecutar las pruebas en un entorno Node.js.
-  - Cargar variables de entorno desde un archivo .env.
-  - Proveer un entorno aislado para las pruebas.
-
-**Resultados esperados**
-  - Las pruebas unitarias permiten garantizar que el controlador funcione como se espera en casos normales.
-  - Si las dependencias no se comportan correctamente o el controlador contiene errores, las pruebas fallarán, lo que facilita la detección y solución de problemas.
 ---
 
 ### Implementación de Pruebas de Integración para las Rutas de Autenticación
