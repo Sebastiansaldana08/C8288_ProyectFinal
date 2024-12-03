@@ -321,7 +321,7 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 
 ![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen7.JPG)
 
----
+
 ## Funcionalidades avanzadas
 
 - **Seguridad mejorada:**
