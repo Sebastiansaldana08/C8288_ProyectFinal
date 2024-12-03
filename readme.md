@@ -320,3 +320,30 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 ![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen6.JPG)
 
 ![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen7.JPG)
+
+---
+## Funcionalidades avanzadas
+
+- **Seguridad mejorada:**
+  - Control de Acceso Basado en Roles (RBAC)
+  - Encabezados de Seguridad con Helmet.js
+  - CORS configurado para permitir solicitudes desde el frontend
+
+- **Optimización del rendimiento:**
+  - Compresión de respuestas HTTP con compression
+  - Cacheo de recursos estáticos y consultas frecuentes con Redis
+
+- **Gestión de errores y logging:**
+  - Logging avanzado con Winston
+  - Middleware global de manejo de errores
+
+- **Pruebas:**
+  - Pruebas unitarias con Jest
+  - Pruebas de integración con Supertest
+
+- **Despliegue mejorado:**
+  - Despliegue multi-contenedor con Docker Compose incluyendo Redis
+
+## Acceso a la API
+
+La documentación de la API está disponible en [http://localhost:3000/api-docs](http://localhost:3000/api-docs) una vez que la aplicación esté en ejecución.
