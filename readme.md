@@ -404,8 +404,8 @@ El objetivo de esta sección fue implementar pruebas de integración para las ru
 2. Preparación del entorno de pruebas
 Se configuró el entorno de pruebas para simular un entorno controlado:
 
-   - Limpieza de datos previos:
-     - Antes de ejecutar las pruebas, se eliminaron todos los registros dependientes en la tabla recursos y, posteriormente, en la tabla usuarios para evitar conflictos con restricciones de claves foráneas.
+   - Limpieza de datos previos y reinicio de contador de ID's:
+     - Antes de ejecutar las pruebas, se eliminaron todos los registros dependientes en la tabla recursos y, posteriormente, en la tabla usuarios para evitar conflictos con restricciones de claves foráneas, asimismo se reinica el contador de ID's para evitar problemas con registros anteriores.
    - Finalización de recursos:
      - Después de las pruebas, se cerró la conexión a la base de datos para liberar recursos.
   
@@ -440,3 +440,4 @@ Se configuró el entorno de pruebas para simular un entorno controlado:
      - El usuario puede iniciar sesión con las credenciales correctas.
      - El sistema genera un token JWT válido para el usuario.
      - La respuesta contiene un código 200 y el token generado.
+---
