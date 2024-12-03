@@ -8,6 +8,9 @@ beforeAll(async () => {
 
     // Luego eliminar los usuarios
     await pool.query('DELETE FROM usuarios');
+
+    // Reiniciar el contador de IDs
+    await pool.query('ALTER SEQUENCE usuarios_id_seq RESTART WITH 1');
 });
 
 
@@ -20,7 +23,7 @@ describe('Auth Routes', () => {
         const res = await request(app)
             .post('/auth/register')
             .send({
-                id: 6,
+                id: 1,
                 nombre: 'Gonzalo Saldana',
                 email: 'gonzalo@example.com',
                 contrasenia: 'securepassword',
@@ -28,7 +31,7 @@ describe('Auth Routes', () => {
             });
 
         expect(res.statusCode).toEqual(201);
-        expect(res.body.usuario).toHaveProperty('id', 5);
+        expect(res.body.usuario).toHaveProperty('id', 1);
         expect(res.body.usuario.email).toBe('gonzalo@example.com');
     });
 
