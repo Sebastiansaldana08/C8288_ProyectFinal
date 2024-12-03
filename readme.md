@@ -324,13 +324,108 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 
 ## Funcionalidades avanzadas
 
-- **Seguridad mejorada:**
-  - Control de Acceso Basado en Roles (RBAC)
-  - Encabezados de Seguridad con Helmet.js
-  - CORS configurado para permitir solicitudes desde el frontend
+### Seguridad Mejorada
+
+---
+### Implementación de Pruebas Unitarias para el Controlador de Autenticación
+
+Las pruebas unitarias tienen como objetivo probar una parte específica del sistema, en este caso, el controlador de autenticación (`authController`).
+
+Usamos mocks para simular el comportamiento de las dependencias (como `bcrypt` y `usuarioModel`) y verificamos que se llamen correctamente con los datos esperados.
+
+Esto permite verificar la lógica de negocio del controlador sin depender de otras partes del sistema, como la base de datos o las herramientas de encriptación.
+
+### Proceso
+1. Identificación del método a probar
+   - El método `registrar` del controlador de autenticación fue seleccionado como el foco de las pruebas. Este método maneja la lógica para registrar nuevos usuarios en el sistema.
+2. Simulación de dependencias
+Para realizar las pruebas unitarias, se utilizaron mocks para simular las dependencias externas del controlador, incluyendo:
+
+   - bcrypt: Simula la encriptación de contraseñas.
+   - usuarioModel: Representa el modelo que interactúa con la base de datos para registrar usuarios.
+   - jsonwebtoken: Mockeado pero no utilizado directamente en esta prueba.
+  
+    El uso de mocks permite que las pruebas sean independientes de estas dependencias externas y evita efectos secundarios.
+
+3. Creación de datos simulados
+Se simularon tanto la solicitud enviada al controlador (req) como la respuesta esperada (res). Esto incluye:
+
+   - Datos de entrada: Información del usuario que se desea registrar (nombre, email, contraseña, rol).
+   - Mock de respuesta: Métodos como status y json para simular la respuesta del controlador al cliente.
+
+4. Ejecución del método
+El método registrar fue ejecutado con los datos simulados. Esto permitió evaluar cómo el controlador maneja el flujo de datos y las interacciones con sus dependencias.
+
+5. Verificación de comportamiento
+Se realizaron verificaciones para confirmar que:
+
+   - La contraseña se encripta correctamente utilizando bcrypt.
+   - El modelo de usuario guarda los datos correctos con el método crearUsuario.
+   - El controlador responde con un código HTTP 201 al registrar el usuario exitosamente.
+   - La respuesta incluye un objeto JSON con los datos del usuario registrado.
+
+- Configuración adicional
+Archivo de Configuración de Jest
+Se configuró Jest para:
+
+  - Ejecutar las pruebas en un entorno Node.js.
+  - Cargar variables de entorno desde un archivo .env.
+  - Proveer un entorno aislado para las pruebas.
+
+**Resultados esperados**
+  - Las pruebas unitarias permiten garantizar que el controlador funcione como se espera en casos normales.
+  - Si las dependencias no se comportan correctamente o el controlador contiene errores, las pruebas fallarán, lo que facilita la detección y solución de problemas.
+---
+
+### Implementación de Pruebas de Integración para las Rutas de Autenticación
+
+El objetivo de esta sección fue implementar pruebas de integración para las rutas de autenticación. Estas pruebas verifican que múltiples componentes del sistema trabajen juntos de manera correcta, incluyendo el controlador, el modelo, la base de datos y las rutas configuradas.
 
 
-- **Pruebas:**
-  - Pruebas unitarias con Jest
-  - Pruebas de integración con Supertest
+### Proceso
 
+1. Identificación de las rutas a probar
+
+    Se seleccionaron las siguientes rutas relacionadas con la autenticación:
+
+      - Registro de usuarios (POST /auth/register): Crea un nuevo usuario en la base de datos.
+      - Inicio de sesión (POST /auth/login): Autentica al usuario y devuelve un token JWT.
+2. Preparación del entorno de pruebas
+Se configuró el entorno de pruebas para simular un entorno controlado:
+
+   - Limpieza de datos previos:
+     - Antes de ejecutar las pruebas, se eliminaron todos los registros dependientes en la tabla recursos y, posteriormente, en la tabla usuarios para evitar conflictos con restricciones de claves foráneas.
+   - Finalización de recursos:
+     - Después de las pruebas, se cerró la conexión a la base de datos para liberar recursos.
+  
+1. Implementación de las pruebas
+    Prueba 1: Registro de Usuarios
+   - Flujo probado:
+     - Se envió una solicitud POST /auth/register con los datos de un nuevo usuario.
+     - El controlador procesó los datos, encriptó la contraseña, y almacenó los datos en la base de datos.
+     - La respuesta fue validada para asegurar:
+       - Código HTTP 201 (creado).
+       - La respuesta contiene los datos del usuario recién registrado, incluyendo su id y email.
+
+    Prueba 2: Inicio de Sesión
+   - Flujo probado:
+     - Se envió una solicitud POST /auth/login con las credenciales del usuario recién registrado.
+     - El controlador verificó las credenciales, generó un token JWT y devolvió una respuesta.
+     - La respuesta fue validada para asegurar:
+         - Código HTTP 200 (éxito).
+         - La respuesta contiene un token de acceso (token).
+
+    Uso de Herramientas
+   - supertest: Se utilizó para simular solicitudes HTTP a las rutas del servidor sin necesidad de ejecutar el servidor en un puerto físico. Esto permitió probar la aplicación directamente desde el entorno de pruebas.
+   - jest: Administró las pruebas, incluyendo la ejecución de configuraciones previas y el análisis de resultados.
+
+
+    **Resultados Esperados**
+   - Prueba de Registro:
+     - Un nuevo usuario es registrado con éxito.
+     - Los datos enviados coinciden con los almacenados en la base de datos.
+     - La respuesta contiene un código 201 y los datos esperados del usuario.
+   - Prueba de Inicio de Sesión:
+     - El usuario puede iniciar sesión con las credenciales correctas.
+     - El sistema genera un token JWT válido para el usuario.
+     - La respuesta contiene un código 200 y el token generado.
