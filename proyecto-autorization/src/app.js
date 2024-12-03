@@ -34,7 +34,5 @@ app.use("/auth",authRoutes);  // /recursos/register, /recursos/login, etc.
 app.use("/recursos",recursoRoutes); // /recursos/crear, /recursos/listar, etc.
 
 
-
-app.listen(process.env.PUERTO_EXPRESS,()=>{
-    console.log(`Puerto ${process.env.PUERTO_EXPRESS} en escucha`);
-})
+// Exportar app para que pueda ser utilizada en pruebas
+module.exports = app;
