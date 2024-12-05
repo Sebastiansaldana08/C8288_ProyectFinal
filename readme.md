@@ -459,7 +459,7 @@ app.use(helmet());
 ---
 
 ### Implementación de CORS:
-El middleware CORS permitirá el acceso controlado a recursos de diferentes orígenes. En este caso, la comunicación entre el frontend y el backend:
+El middleware CORS permitirá el acceso controlado a recursos de diferentes orígenes. En este caso, la comunicación entre el frontend y el backend, pues están en diferentes puertos:
 
 ```javascript
 //Middleware a nivel de aplicación para configurar CORS
@@ -470,3 +470,6 @@ app.use(
   })
 );
 ``
+
+- Aquí se realiza la configuración para permitir SOLO solicitudes DESDE el dominio especificado en "origin".
+- La opción optionsSuccessStatus: 200 en el middleware CORS una directiva que especifica el código de estado HTTP que se debe enviar en respuesta a una solicitud de pre-vuelo (antes de enviar la petición real, se envía una petición de prevuelo para asegurarse de que el servidor permita esta interacción). Por lo que un código de estado 200 indica claramente que la solicitud de pre-vuelo fue exitosa y que el navegador puede proceder con la solicitud real.
