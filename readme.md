@@ -466,7 +466,7 @@ El middleware CORS permitirá el acceso controlado a recursos de diferentes orí
 app.use(
   cors({
     origin: "http://localhost:3000", //Se permiten solicitudes solo de este dominio donde se está ejecutando el frontend
-    optionsSuccessStatus: 200, // Para respuestas exitosas en navegadores antiguos
+    optionsSuccessStatus: 200, //Para respuestas exitosas en los navegadores
   })
 );
 ``
