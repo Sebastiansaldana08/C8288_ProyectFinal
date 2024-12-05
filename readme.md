@@ -694,3 +694,46 @@ redisClient.on("error", (err) => {
 //Exporto tanto el cliente de la base de datos como el cliente Redis
 module.exports = { pool, redisClient };
 ```
+
+---
+
+### Uso en controladores para cachear datos 
+
+```javascript
+// Handler function para obtener TODOS los recursos con Redis Cache
+const obtenerRecTodo = async (req, res) => {
+  try {
+    // Verifico si los recursos están en la caché de Redis
+    redisClient.get("recursos", async (err, data) => {
+      if (err) {
+        console.error("Error al acceder a Redis:", err);
+        throw err;
+      }
+
+      if (data) {
+        // Si los recursos están en Redis, los envío directamente al cliente
+        console.log("Recursos obtenidos desde Redis Cache");
+        return res.json(JSON.parse(data));
+      } else {
+        // Si no están en Redis, los obtengo desde la base de datos
+        console.log("Recursos no están en Redis. Consultando la base de datos...");
+        const recursos = await recursoModel.obtenerRecurso();
+
+        // Almaceno los recursos en Redis con un tiempo de expiración de 1 hora
+        redisClient.setex("recursos", 3600, JSON.stringify(recursos));
+
+        // Envío los recursos al cliente
+        res.json(recursos);
+      }
+    });
+  } catch (error) {
+    console.error("Error al obtener los recursos:", error);
+    res.status(500).json({ error: "No se pudo obtener los recursos" });
+  }
+};
+```
+
+Aquí primero se verifica si los datos solicitados se encuentran en la caché de Redis.
+Si está, entonces se envían esos datos almacenados en la caché de Redis DIRECTAMENTE al cliente (lo cual reduce la latencia).
+Sin embargo, si NO lo está, entonces se consulta a la base de datos; una vez que se obtiene respuesta, se almacena en la caché de Redis y, posteriormente, se envía la respuesta al cliente.
+
