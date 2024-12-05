@@ -441,3 +441,13 @@ Se configuró el entorno de pruebas para simular un entorno controlado:
      - El sistema genera un token JWT válido para el usuario.
      - La respuesta contiene un código 200 y el token generado.
 ---
+
+
+### Implementación de Helmet
+```javascript
+// Importar Helmet para encabezados de seguridad HTTP
+const helmet = require("helmet");
+
+// Middleware para Helmet.js (añade encabezados de seguridad HTTP)
+app.use(helmet());
+``
