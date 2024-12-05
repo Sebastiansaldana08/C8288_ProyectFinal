@@ -443,7 +443,9 @@ Se configuró el entorno de pruebas para simular un entorno controlado:
 ---
 
 
-### Implementación de Helmet
+### Implementación de Helmet:
+Helmet va a ayudar a proteger la aplicación de algunas vulnerabilidades web mediante el establecimiento correcto de cabeceras HTTP.
+En sí, Helmet es una herramienta fundamenta que servirá para configurar y proteger las cabeceras HTTP en las respuestas de la aplicación web. De tal forma que al utilizar Helmet, se está añadiendo una capa extra de seguridad que ayuda a prevenir una amplia variedad de ataques comunes.
 ```javascript
 // Importar Helmet para encabezados de seguridad HTTP
 const helmet = require("helmet");
