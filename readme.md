@@ -324,7 +324,6 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 
 ## Funcionalidades avanzadas
 
----
 ### Implementación de Pruebas Unitarias para el Controlador de Autenticación
 
 El objetivo de estas pruebas unitarias es garantizar el correcto funcionamiento de las funcionalidades principales del controlador de autenticación (authController). Estas incluyen:
