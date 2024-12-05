@@ -472,4 +472,11 @@ app.use(
 ```
 
 - Aquí se realiza la configuración para permitir SOLO solicitudes DESDE el dominio especificado en "origin".
-- La opción optionsSuccessStatus: 200 en el middleware CORS una directiva que especifica el código de estado HTTP que se debe enviar en respuesta a una solicitud de pre-vuelo (antes de enviar la petición real, se envía una petición de prevuelo para asegurarse de que el servidor permita esta interacción). Por lo que un código de estado 200 indica claramente que la solicitud de pre-vuelo fue exitosa y que el navegador puede proceder con la solicitud real.
+- La opción **optionsSuccessStatus: 200** en el middleware CORS una directiva que especifica el código de estado HTTP que se debe enviar en respuesta a una solicitud de pre-vuelo (antes de enviar la petición real, se envía una petición de prevuelo para asegurarse de que el servidor permita esta interacción). Por lo que un código de estado 200 indica claramente que la solicitud de pre-vuelo fue exitosa y que el navegador puede proceder con la solicitud real.
+
+---
+
+### Optimización del rendimiento:
+* Compresión de respuesta HTTP:
+¿Por qué es encesaria la compresión de respuesta HTTP?
+La compresión reduce el tamaño de los datos que se envían desde el servidor al cliente. Esto se logra aplicando algoritmos matemáticos que eliminan redundancias en los datos. De tal forma que al reducir el tamaño de los archivos, se disminuyen los tiempos de transferencia, lo que da como resultado páginas web que se cargan más rápido.
