@@ -324,8 +324,6 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 
 ## Funcionalidades avanzadas
 
-### Seguridad Mejorada
-
 ---
 ### Implementación de Pruebas Unitarias para el Controlador de Autenticación
 
