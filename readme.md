@@ -512,7 +512,7 @@ const logger = createLogger({
   ],
 });
 
-// Si no está en producción, agregar salida a consola para desarrollo
+//Si no está en producción, agregar salida a consola para desarrollo
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new transports.Console({
@@ -529,8 +529,43 @@ Inicialmente, se importan las siguientes funciones de Winston:
  const { createLogger, format, transports } = require("winston");
 ```
 -**createLogger**: Permitirá crear una nueva instancia de logger.
+
 -**format**: Esta función permitirá personalizar el formato de los mensajes de log.
+
 -**transports**: Acá se defineb los destinos a donde se enviarán los logs (por ejemplo, archivos o en la consola).
 
+Luego, se crea un logger:
 
+```javascript
+const logger = createLogger({
+  level: "info",
+  format: format.combine(
+    format.timestamp(),
+    format.json() // Formato JSON para registros estructurados
+  ),
+  transports: [
+    new transports.File({ filename: "logs/error.log", level: "error" }), // Log de errores
+    new transports.File({ filename: "logs/combined.log" }), // Todos los logs
+  ],
+});
+```
 
+- **level: "info"** establece que solo se van a registrar mensajes con nivel de severidad "info" o superior, como warn, error, debug.
+- **format: format.combine()** combina dos formatos:
+- **format.timestamp()**: Esto agregará una marca de tiempo a cada mensaje de log.
+- **format.json()**: Formatea los mensajes como objetos JSON.
+- **Transports:** Define dónde se guardarán los logs:
+  - **new transports.File({ filename: "logs/error.log", level: "error" })**: Esto crea un archivo error.log para guardar únicamente los mensajes de error.
+  - **new transports.File({ filename: "logs/combined.log" })**: Esto crea un archivo combined.log para guardar todos los mensajes.
+
+Posteriormente, si la aplicación se está ejecutando en un entorno de desarrollo (es decir, la variable de entorno NODE_ENV no es "production"), se agrega un transport adicional para mostrar los logs en la consola. Lo cual es útil para ver los mensajes de log en tiempo real mientras se desarrolla la aplicación:
+
+```javascript
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.simple(), // Logs simples para consola
+    })
+  );
+}
+```
