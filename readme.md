@@ -445,11 +445,28 @@ Se configuró el entorno de pruebas para simular un entorno controlado:
 
 ### Implementación de Helmet:
 Helmet va a ayudar a proteger la aplicación de algunas vulnerabilidades web mediante el establecimiento correcto de cabeceras HTTP.
+
 En sí, Helmet es una herramienta fundamental que servirá para configurar y proteger las cabeceras HTTP en las respuestas de la aplicación web. De tal forma que al utilizar Helmet, se está añadiendo una capa extra de seguridad que ayuda a prevenir una amplia variedad de ataques comunes.
+
 ```javascript
 //Importando Helmet para encabezados de seguridad HTTP
 const helmet = require("helmet");
 
 //Se usa el middleware a nivel de aplicación
 app.use(helmet());
+``
+
+---
+
+### Implementación de CORS:
+El middleware CORS permitirá el acceso controlado a recursos de diferentes orígenes. En este caso, la comunicación entre el frontend y el backend:
+
+```javascript
+//Middleware a nivel de aplicación para configurar CORS
+app.use(
+  cors({
+    origin: "http://localhost:3000", //Se permiten solicitudes solo de este dominio donde se está ejecutando el frontend
+    optionsSuccessStatus: 200, // Para respuestas exitosas en navegadores antiguos
+  })
+);
 ``
