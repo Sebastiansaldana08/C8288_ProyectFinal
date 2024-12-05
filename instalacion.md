@@ -46,3 +46,13 @@ En 2 terminales apartes, ejecutar los siguientes comandos:
 
 ### 4) Interacción con la aplicación:
 - Finalmente, en el navegador, el frontend se ejecutará automáticamente y se podrá interactuar con la app.
+
+---
+
+### Evidencias de la interacción con la app:
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen1.png)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen2.png)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen3.png)
