@@ -488,3 +488,49 @@ app.use(compression());
 ```
 
 Al colocar app.use(compression()), se está indicando que se comprima automáticamente el cuerpo de todas las respuestas HTTP antes de que estas sean enviadas al cliente.
+
+---
+
+### Mejora de la gestión de errores y logging
+* **Winston:**
+Se usa winston para la gestión de logs. En sí, winston permitirá registrar todo lo que ocurre en la aplicación: desde mensajes de información hasta errores críticos. Esta información es importante, ya que servirá posteriormente para la depuración, incluso para monitorear el desempeño de la app y analizar el comportamiento de la misma.
+En otras palabras, winston permitirá identificar y solucionar problemas de manera más eficiente.
+
+
+```javascript
+const { createLogger, format, transports } = require("winston");
+
+const logger = createLogger({
+  level: "info",
+  format: format.combine(
+    format.timestamp(),
+    format.json() // Formato JSON para registros estructurados
+  ),
+  transports: [
+    new transports.File({ filename: "logs/error.log", level: "error" }), // Log de errores
+    new transports.File({ filename: "logs/combined.log" }), // Todos los logs
+  ],
+});
+
+// Si no está en producción, agregar salida a consola para desarrollo
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.simple(), // Logs simples para consola
+    })
+  );
+}
+
+module.exports = logger;
+```
+
+Inicialmente, se importan las siguientes funciones de Winston:
+```javascript
+ const { createLogger, format, transports } = require("winston");
+```
+-**createLogger**: Permitirá crear una nueva instancia de logger.
+-**format**: Esta función permitirá personalizar el formato de los mensajes de log.
+-**transports**: Acá se defineb los destinos a donde se enviarán los logs (por ejemplo, archivos o en la consola).
+
+
+
