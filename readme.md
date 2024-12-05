@@ -779,3 +779,23 @@ const eliminar = async (req, res) => {
 ```
 
 Para las operaciones de actualización y eliminación de recursos, se usa redis, pero para eliminar los datos anteriores almacenados en caché.
+
+----
+
+### INSTRUCCIONES PARA LA EJECUCIÓN DE LA APLICACIÓN
+
+### 1) Clonar el repositorio:
+Se clona el repositorio para obtener todas las carpetas y archivos necesarios para preparar el entorno de la ejecución:
+git clone -b <nombre_de_la_rama>
+
+### 2) Instalar las dependencias:
+Una vez que se ha clonado el repositorio, ingresar a las siguientes carpetas: "frontend" y "proyecto_autorizacion"
+- Dentro de la carpeta "frontend" (cd frontend), ejecutar el comando "npm install" (ya que allí se encuentra el package.json) para instalar las dependencias necesarias.
+- Dentro de la carpeta "proyecto-autorization", de igual manera, ejecutar el comando "npm install"
+
+### 3) Ejecución del backend y del frontend:
+En 2 terminales apartes, ejecutar los siguientes comandos:
+ * Backend:
+   - Ingresar a "proyecto-autorization", luego a "src" y allí ejecutar "node server.js"
+ * Frontend:
+   - Ingresar a "frontend", y ejecutar, allí, "npm start".
