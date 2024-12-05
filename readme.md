@@ -487,4 +487,4 @@ La compresión reduce el tamaño de los datos que se envían desde el servidor a
 app.use(compression());
 ```
 
-Al colocar app.use(compression()) al principio de tus rutas, indicas a Express que comprima automáticamente el cuerpo de todas las respuestas HTTP antes de enviarlas al cliente.
+Al colocar app.use(compression()), se está indicando que se comprima automáticamente el cuerpo de todas las respuestas HTTP antes de que estas sean enviadas al cliente.
