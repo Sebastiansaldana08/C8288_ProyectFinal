@@ -480,3 +480,10 @@ app.use(
 * Compresión de respuesta HTTP:
 ¿Por qué es encesaria la compresión de respuesta HTTP?
 La compresión reduce el tamaño de los datos que se envían desde el servidor al cliente. Esto se logra aplicando algoritmos matemáticos que eliminan redundancias en los datos. De tal forma que al reducir el tamaño de los archivos, se disminuyen los tiempos de transferencia, lo que da como resultado páginas web que se cargan más rápido.
+
+```javascript
+//Middleware para comprimir respuestas HTTP
+app.use(compression());
+```
+
+Al colocar app.use(compression()) al principio de tus rutas, indicas a Express que comprima automáticamente el cuerpo de todas las respuestas HTTP antes de enviarlas al cliente.
