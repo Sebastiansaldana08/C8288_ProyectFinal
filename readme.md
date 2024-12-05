@@ -333,7 +333,7 @@ El objetivo de estas pruebas unitarias es garantizar el correcto funcionamiento 
 
 ### Proceso
 1. Configuración de las pruebas
-   Simulación de dependencias:
+   - Simulación de dependencias:
       - Se utilizaron mocks (jest.mock) para simular el comportamiento de las dependencias externas:
         - bcrypt: Para simular la encriptación y verificación de contraseñas.
         - usuarioModel: Para simular las operaciones de la base de datos relacionadas con usuarios (creación y búsqueda).
