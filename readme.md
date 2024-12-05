@@ -737,3 +737,45 @@ Aquí primero se verifica si los datos solicitados se encuentran en la caché de
 Si está, entonces se envían esos datos almacenados en la caché de Redis DIRECTAMENTE al cliente (lo cual reduce la latencia).
 Sin embargo, si NO lo está, entonces se consulta a la base de datos; una vez que se obtiene respuesta, se almacena en la caché de Redis y, posteriormente, se envía la respuesta al cliente.
 
+---
+
+```javascript
+const actualizar = async (req, res) => {
+  console.log("Iniciando controlador de actualización...");
+  try {
+    const { id } = req.params;
+    const { tipo_recurso, configuracion, estado } = req.body.recurso || req.body;
+
+    const recursoActualizado = await recursoModel.actualizarRecurso(id, tipo_recurso, configuracion, estado);
+
+    if (!recursoActualizado) {
+      return res.status(404).json({ error: "Recurso no encontrado." });
+    }
+
+    //Actualizo la caché de Redis para reflejar los cambios
+    redisClient.del("recursos"); //Se eliminan los datos almacenados en caché
+    res.json(recursoActualizado);
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar el recurso. Revisa los logs del servidor." });
+  }
+};
+```
+
+```javascript
+// Handler function para eliminar un recurso
+const eliminar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const respuesta = await recursoModel.eliminarRecurso(id);
+
+    // Elimina la caché después de la operación
+    redisClient.del("recursos");
+
+    res.json(respuesta);
+  } catch (error) {
+    res.status(500).json({ error: "No se puede eliminar el recurso" });
+  }
+};
+```
+
+Para las operaciones de actualización y eliminación de recursos, se usa redis, pero para eliminar los datos anteriores almacenados en caché.
