@@ -567,3 +567,45 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 Así, aquí se está crean un logger de Winston que registra información detallada sobre la ejecución de la aplicación en archivos y, opcionalmente, en la consola. Esto va a permitir tener un mejor control sobre la aplicación y facilitará el mantenimiento.
+
+---
+
+### Integración de Morgan con Winston:
+**Morgan**: Se encarga de registrar información detallada sobre las solicitudes HTTP que llegan a la aplicación.
+
+¿Por qué Morgan?
+1) Proporciona una visión clara de todas las solicitudes que recibe tu aplicación, incluyendo la hora, el método HTTP (GET, POST, etc.), la URL, el código de estado de la respuesta, el tiempo de respuesta y otra información relevante.
+2) Depuración: Al registrar las solicitudes, se pueden identificar fácilmente errores y problemas en la aplicación. Por ejemplo, si una ruta no funciona como se espera, se podrán revisar los logs para ver qué está sucediendo.
+3) Análisis: Los logs generados por Morgan pueden ser utilizados para analizar el comportamiento de la aplicación.
+
+```javascript
+
+//Importando Morgan y Logger
+const morgan = require("morgan");
+const logger = require("./config/logger");
+
+
+//Integración de Morgan con Winston
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()), //Aquí se envían logs de Morgan a Winston
+    },
+  })
+);
+
+```
+- Aquí se está utilizando el middleware de Morgan con el formato "combined". Este formato brindará una gran cantidad de información sobre cada solicitud, como el método HTTP, la URL, el código de estado, el tiempo de respuesta, etc.
+* { stream: ... }:
+   - Este objeto configura la salida de los logs de Morgan.
+   - En lugar de enviar los logs directamente a la consola, se redirigen a un flujo personalizado.
+     
+- Esta línea es la que conecta Morgan con Winston.
+* stream: { write: (message) => logger.info(message.trim()) }
+   - **write**: Esta función se ejecuta cada vez que Morgan tiene un nuevo log.
+   - **message**: Contiene el mensaje de log formateado por Morgan.
+   - **logger.info(message.trim()):** El mensaje se envía al logger de Winston con el nivel de severidad "info". trim() eliminará cualquier espacio en blanco al principio o al final del mensaje.
+ 
+Tener en cuenta lo siguiente:
+- **Morgan** captura los detalles de las solicitudes HTTP, proporcionando una visión clara del tráfico de la aplicación.
+- **Winston** permite personalizar y gestionar esos logs de manera eficiente, enviándolos a diferentes destinos y estableciendo diferentes niveles de detalle.
