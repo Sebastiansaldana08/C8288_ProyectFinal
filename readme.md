@@ -529,7 +529,7 @@ Inicialmente, se importan las siguientes funciones de Winston:
 
 -**format**: Esta función permitirá personalizar el formato de los mensajes de log.
 
--**transports**: Acá se defineb los destinos a donde se enviarán los logs (por ejemplo, archivos o en la consola).
+-**transports**: Acá se definen los destinos a donde se enviarán los logs (por ejemplo, archivos o en la consola).
 
 Luego, se crea un logger:
 
@@ -549,8 +549,8 @@ const logger = createLogger({
 
 - **level: "info"** establece que solo se van a registrar mensajes con nivel de severidad "info" o superior, como warn, error, debug.
 - **format: format.combine()** combina dos formatos:
-- **format.timestamp()**: Esto agregará una marca de tiempo a cada mensaje de log.
-- **format.json()**: Formatea los mensajes como objetos JSON.
+  - **format.timestamp()**: Esto agregará una marca de tiempo a cada mensaje de log.
+  - **format.json()**: Formatea los mensajes como objetos JSON.
 - **Transports:** Define dónde se guardarán los logs:
   - **new transports.File({ filename: "logs/error.log", level: "error" })**: Esto crea un archivo error.log para guardar únicamente los mensajes de error.
   - **new transports.File({ filename: "logs/combined.log" })**: Esto crea un archivo combined.log para guardar todos los mensajes.
@@ -566,3 +566,4 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 ```
+Así, aquí se está crean un logger de Winston que registra información detallada sobre la ejecución de la aplicación en archivos y, opcionalmente, en la consola. Esto va a permitir tener un mejor control sobre la aplicación y facilitará el mantenimiento.
