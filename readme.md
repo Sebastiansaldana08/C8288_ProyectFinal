@@ -609,3 +609,51 @@ app.use(
 Tener en cuenta lo siguiente:
 - **Morgan** captura los detalles de las solicitudes HTTP, proporcionando una visión clara del tráfico de la aplicación.
 - **Winston** permite personalizar y gestionar esos logs de manera eficiente, enviándolos a diferentes destinos y estableciendo diferentes niveles de detalle.
+
+---
+
+### Despliegue mejorado con Docker Compose
+Actualización del archivo docker-compose.yml para incluir Redis:
+
+```javascript
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./proyecto-autorization
+      dockerfile: Dockerfile.backend
+    env_file:
+      - ./proyecto-autorization/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis #Se agrega Redis como dependencia del backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis: # Configuración del servicio Redis
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  db-data:
+```
