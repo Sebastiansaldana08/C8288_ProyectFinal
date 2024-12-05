@@ -810,7 +810,7 @@ En 2 terminales apartes, ejecutar los siguientes comandos:
 
 -----
 
-### Evidencias:
+### Evidencias de la interacción con la app:
 
 ![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen1.png)
 
