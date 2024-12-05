@@ -795,7 +795,7 @@ Una vez que se ha clonado el repositorio, ingresar a las siguientes carpetas: "f
 - Dentro de la carpeta "proyecto-autorization", de igual manera, ejecutar el comando "npm install"
 
 ### 3) Archivo .env:
-Modificar las variables de entorno que se encuentran en el archivo .env de acuerdo a la configuración de la base de datos Postgres local.
+Modificar las variables de entorno que se encuentran en el archivo .env de acuerdo a la configuración de la base de datos Postgres local y modificar la configuración de conexión de redis (como el host y el puerto).
 
 ### 4) Ejecución del backend y del frontend:
 En 2 terminales apartes, ejecutar los siguientes comandos:
