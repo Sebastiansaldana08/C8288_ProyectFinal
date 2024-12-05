@@ -1,5 +1,5 @@
 //Se importa el cliente de la BD para insertar valores
-const pool=require("../config/dbConfig");
+const { pool } = require("../config/dbConfig");
 
 //Esta función se encargará de insertar recursos a la BD
 const crearRecurso=async (tipo_recurso,configuracion,estado,id_usuario)=>{
@@ -16,16 +16,17 @@ const crearRecurso=async (tipo_recurso,configuracion,estado,id_usuario)=>{
 }
 
 //Función para obtener todos los recursos
-const obtenerRecurso=async ()=>{
-    
-    //Acá hago la consulta
-    const resultado=await pool.query(
-        'SELECT * FROM recursos'
-    );
+const obtenerRecurso = async () => {
+    try {
+        const resultado = await pool.query('SELECT * FROM recursos');
+        console.log('Recursos obtenidos desde la BD:', resultado.rows);
+        return resultado.rows;
+    } catch (error) {
+        console.error('Error al obtener los recursos:', error);
+        throw error;
+    }
+};
 
-    //Se devuelven los recursos
-    return resultado.rows; //Acá se devuelven TODOS los recursos, NO SOLO EL PRIMERO. Por eso no coloco "rows[0]"
-}
 
 //Función para obtener un recurso determinado
 const obtenerRecursoID=async(id)=>{

@@ -1,109 +1,140 @@
-//Acá uso las funciones definidas en recursoModel!!!
+// Importo los módulos necesarios
+const recursoModel = require("../models/recursoModel");
+const { pool, redisClient } = require("../config/dbConfig"); // Incluimos Redis desde dbConfig
 
-//Importo el recursoModel que tendrá las funciones definidas para realizar las acciones definidas allí
-const recursoModel=require("../models/recursoModel");
+// Handler function para crear un recurso
+const crear = async (req, res) => {
+  const { tipo_recurso, configuracion, estado } = req.body;
+  const id_usuario = req.usuario.id; // Se obtiene el ID del usuario autenticado
 
-//Acá se crea la handler function para crear un recurso
-const crear=async(req,res)=>{
+  try {
+    console.log("Datos recibidos para crear recurso:", { tipo_recurso, configuracion, estado, id_usuario });
     
-    //Obtengo los datos pasados por parámetros
-    const {tipo_recurso,configuracion,estado}=req.body; //,id_usuario       //req.body.recurso
-    const id_usuario=req.usuario.id; //Se obtiene el id del usuario ya autenticado
-    console.log(tipo_recurso,configuracion,estado,id_usuario);
+    const nuevoRecurso = await recursoModel.crearRecurso(tipo_recurso, configuracion, estado, id_usuario);
 
-    try{
-        
-        //Se realiza la consulta a la BD y se obtiene el recurso creado (puesto que este es devuelto en la función crearRecurso de recursoModel)
-        const nuevoRecurso=await recursoModel.crearRecurso(tipo_recurso,configuracion,estado,id_usuario);
+    // Eliminar la caché de Redis
+    redisClient.del("recursos", (err) => {
+      if (err) console.error("Error al eliminar la caché de Redis tras crear recurso:", err);
+      else console.log("Caché de Redis eliminada tras creación de recurso.");
+    });
 
- 
-        //Si no hay errores, se devuelve al usuario el recurso que se acaba de crear
-        res.status(201).json(nuevoRecurso);
-    }catch(error){
-        //En caso haya algún error al crear el recurso, se envía el status code 500 al cliente
-        res.status(500).json({error:"No se pudo crear el recurso"});
-    }
+    res.status(201).json(nuevoRecurso);
+  } catch (error) {
+    console.error("Error al crear el recurso:", error);
+    res.status(500).json({ error: "No se pudo crear el recurso" });
+  }
 };
 
-//Handler function para obtener TODOS los recursos
-const obtenerRecTodo=async(req,res)=>{
-    try{
-        
-        const recursos=await recursoModel.obtenerRecurso();
-        res.json(recursos);
-    }catch(error){
-        res.status(500).json({error:"No se pudo obtener los recursos"});
-    }
-}
-
-//Handler function para obtener un recurso por ID
-const obtenerRecID=async(req,res)=>{
-    //Obtengo el id (este será una ruta dinámica), por lo que accederé mediante .params
-    try{
-        //Obtengo el id que se coloca en la url dinámica (el parámetro de ruta)
-        const {id}=req.params;
-
-        //Realizo la consulta a la BD para ese recurso usando la func. definida para ello
-        const recurso=await recursoModel.obtenerRecursoID(id);
-
-        //Envío ese recurso al cliente
-        res.json(recurso);
-    }catch(error){
-        res.status(500).json({error:"Error al obtener el recurso especificado"});
-    }
-}
-
-const actualizar = async (req, res) => {
-    console.log('Iniciando controlador de actualización...');
-    try {
-      // Obtenemos ID desde los parámetros de la ruta
-      const { id } = req.params;
-      console.log('ID del recurso recibido desde la URL:', id);
-  
-      // datos desde el body de la solicitud
-      const { tipo_recurso, configuracion, estado } = req.body.recurso || req.body;
-      console.log('Datos recibidos en el body:', { tipo_recurso, configuracion, estado });
-  
-      // Actualizamos recurso usando el modelo
-      const recursoActualizado = await recursoModel.actualizarRecurso(id, tipo_recurso, configuracion, estado);
-  
-      // Validamos si el recurso fue encontrado
-      if (!recursoActualizado) {
-        console.error('Recurso no encontrado para el ID proporcionado:', id);
-        return res.status(404).json({ error: 'Recurso no encontrado.' });
+// Handler function para obtener TODOS los recursos con Redis Cache
+const obtenerRecTodo = async (req, res) => {
+  try {
+    console.log("Iniciando función obtenerRecTodo...");
+    redisClient.get("recursos", async (err, data) => {
+      if (err) {
+        console.error("Error al acceder a Redis:", err);
+        throw err;
       }
-  
 
-      console.log('Recurso actualizado correctamente en el controlador:', recursoActualizado);
-  
+      if (data) {
+        console.log("Recursos obtenidos desde Redis Cache:", JSON.parse(data));
+        return res.json(JSON.parse(data));
+      } else {
+        console.log("Recursos no están en Redis. Consultando la base de datos...");
+        const recursos = await recursoModel.obtenerRecurso();
+        console.log("Recursos obtenidos desde la base de datos:", recursos);
 
-      res.json(recursoActualizado);
-    } catch (error) {
+        if (!recursos || recursos.length === 0) {
+          return res.status(404).json({ error: "No hay recursos disponibles." });
+        }
 
-      console.error('Error en el controlador al intentar actualizar el recurso:', error);
-  
+        redisClient.setex("recursos", 3600, JSON.stringify(recursos), (err) => {
+          if (err) console.error("Error al almacenar datos en Redis:", err);
+          else console.log("Datos almacenados en Redis Cache.");
+        });
 
-      res.status(500).json({ error: 'Error al actualizar el recurso. Revisa los logs del servidor.' });
-    }
+        res.json(recursos);
+      }
+    });
+  } catch (error) {
+    console.error("Error al obtener los recursos:", error);
+    res.status(500).json({ error: "No se pudo obtener los recursos" });
+  }
 };
 
-const eliminar=async(req,res)=>{
-    try{
-        //Obtengo el id del producto a eliminar (parámetro de la ruta dinámica)
-        const {id}=req.params;
+// Handler function para obtener un recurso por ID
+const obtenerRecID = async (req, res) => {
+  try {
+    console.log("Solicitud para obtener recurso por ID:", req.params.id);
 
-        console.log("id:",id);
-
-        //Ahora, hago la consulta a la base de datos mediante la función definida en recursoModel
-        const respuesta=await recursoModel.eliminarRecurso(id);
-
-        //Envío esa respuesta al cliente (que es solo un mensaje)
-        res.json(respuesta);
-    }catch(error){
-        res.status(500).json({error:"No se puede eliminar el recurso"});
+    const { id } = req.params;
+    const recurso = await recursoModel.obtenerRecursoID(id);
+    if (!recurso) {
+      return res.status(404).json({ error: "Recurso no encontrado." });
     }
-}
 
+    console.log("Recurso obtenido:", recurso);
+    res.json(recurso);
+  } catch (error) {
+    console.error("Error al obtener el recurso especificado:", error);
+    res.status(500).json({ error: "Error al obtener el recurso especificado" });
+  }
+};
 
-//Exporto estas funciones
-module.exports={crear,obtenerRecTodo,obtenerRecID,actualizar,eliminar};
+// Handler function para actualizar un recurso
+const actualizar = async (req, res) => {
+  console.log("Iniciando controlador de actualización...");
+  try {
+    const { id } = req.params;
+    const { tipo_recurso, configuracion, estado } = req.body;
+
+    console.log("Datos recibidos para actualizar recurso:", { id, tipo_recurso, configuracion, estado });
+
+    const recursoActualizado = await recursoModel.actualizarRecurso(
+      id,
+      tipo_recurso,
+      configuracion,
+      estado
+    );
+
+    if (!recursoActualizado) {
+      return res.status(404).json({ error: "Recurso no encontrado." });
+    }
+
+    // Eliminar la caché para reflejar los cambios
+    redisClient.del("recursos", (err) => {
+      if (err) console.error("Error al eliminar la caché de Redis tras actualizar recurso:", err);
+      else console.log("Caché de Redis eliminada tras actualización de recurso.");
+    });
+
+    console.log("Recurso actualizado correctamente:", recursoActualizado);
+    res.json(recursoActualizado);
+  } catch (error) {
+    console.error("Error al actualizar el recurso:", error);
+    res.status(500).json({ error: "Error al actualizar el recurso. Revisa los logs del servidor." });
+  }
+};
+
+// Handler function para eliminar un recurso
+const eliminar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Solicitud para eliminar recurso con ID:", id);
+
+    const respuesta = await recursoModel.eliminarRecurso(id);
+
+    // Eliminar la caché después de la operación
+    redisClient.del("recursos", (err) => {
+      if (err) console.error("Error al eliminar la caché de Redis tras eliminar recurso:", err);
+      else console.log("Caché de Redis eliminada tras eliminación de recurso.");
+    });
+
+    console.log("Recurso eliminado correctamente:", respuesta);
+    res.json(respuesta);
+  } catch (error) {
+    console.error("Error al eliminar el recurso:", error);
+    res.status(500).json({ error: "No se puede eliminar el recurso" });
+  }
+};
+
+// Exporto estas funciones
+module.exports = { crear, obtenerRecTodo, obtenerRecID, actualizar, eliminar };
