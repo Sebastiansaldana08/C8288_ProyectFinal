@@ -324,9 +324,6 @@ export default { createRecurso, getRecursos, getRecursoById, updateRecurso, dele
 
 ## Funcionalidades avanzadas
 
-### Seguridad Mejorada
-
----
 ### Implementación de Pruebas Unitarias para el Controlador de Autenticación
 
 El objetivo de estas pruebas unitarias es garantizar el correcto funcionamiento de las funcionalidades principales del controlador de autenticación (authController). Estas incluyen:
@@ -336,7 +333,7 @@ El objetivo de estas pruebas unitarias es garantizar el correcto funcionamiento 
 
 ### Proceso
 1. Configuración de las pruebas
-   Simulación de dependencias:
+   - Simulación de dependencias:
       - Se utilizaron mocks (jest.mock) para simular el comportamiento de las dependencias externas:
         - bcrypt: Para simular la encriptación y verificación de contraseñas.
         - usuarioModel: Para simular las operaciones de la base de datos relacionadas con usuarios (creación y búsqueda).
@@ -441,3 +438,344 @@ Se configuró el entorno de pruebas para simular un entorno controlado:
      - El sistema genera un token JWT válido para el usuario.
      - La respuesta contiene un código 200 y el token generado.
 ---
+
+
+### Implementación de Helmet:
+Helmet va a ayudar a proteger la aplicación de algunas vulnerabilidades web mediante el establecimiento correcto de cabeceras HTTP.
+
+En sí, Helmet es una herramienta fundamental que servirá para configurar y proteger las cabeceras HTTP en las respuestas de la aplicación web. De tal forma que al utilizar Helmet, se está añadiendo una capa extra de seguridad que ayuda a prevenir una amplia variedad de ataques comunes.
+
+```javascript
+//Importando Helmet para encabezados de seguridad HTTP
+const helmet = require("helmet");
+
+//Se usa el middleware a nivel de aplicación
+app.use(helmet());
+```
+
+---
+
+### Implementación de CORS:
+El middleware CORS permitirá el acceso controlado a recursos de diferentes orígenes. En este caso, la comunicación entre el frontend y el backend, pues están en diferentes puertos:
+
+```javascript
+//Middleware a nivel de aplicación para configurar CORS
+app.use(
+  cors({
+    origin: "http://localhost:3000", //Se permiten solicitudes solo de este dominio donde se está ejecutando el frontend
+    optionsSuccessStatus: 200, //Para respuestas exitosas en los navegadores
+  })
+);
+```
+
+- Aquí se realiza la configuración para permitir SOLO solicitudes DESDE el dominio especificado en "origin".
+- La opción **optionsSuccessStatus: 200** en el middleware CORS una directiva que especifica el código de estado HTTP que se debe enviar en respuesta a una solicitud de pre-vuelo (antes de enviar la petición real, se envía una petición de prevuelo para asegurarse de que el servidor permita esta interacción). Por lo que un código de estado 200 indica claramente que la solicitud de pre-vuelo fue exitosa y que el navegador puede proceder con la solicitud real.
+
+---
+
+### Optimización del rendimiento:
+* **Compresión de respuesta HTTP:**
+  
+¿Por qué es encesaria la compresión de respuesta HTTP?
+La compresión reduce el tamaño de los datos que se envían desde el servidor al cliente. Esto se logra aplicando algoritmos matemáticos que eliminan redundancias en los datos. De tal forma que al reducir el tamaño de los archivos, se disminuyen los tiempos de transferencia, lo que da como resultado páginas web que se cargan más rápido.
+
+```javascript
+//Middleware para comprimir respuestas HTTP
+app.use(compression());
+```
+
+Al colocar app.use(compression()), se está indicando que se comprima automáticamente el cuerpo de todas las respuestas HTTP antes de que estas sean enviadas al cliente.
+
+---
+
+### Mejora de la gestión de errores y logging
+* **Winston:**
+Se usa winston para la gestión de logs. En sí, winston permitirá registrar todo lo que ocurre en la aplicación: desde mensajes de información hasta errores críticos. Esta información es importante, ya que servirá posteriormente para la depuración, incluso para monitorear el desempeño de la app y analizar el comportamiento de la misma.
+En otras palabras, winston permitirá identificar y solucionar problemas de manera más eficiente.
+
+
+```javascript
+const { createLogger, format, transports } = require("winston");
+
+const logger = createLogger({
+  level: "info",
+  format: format.combine(
+    format.timestamp(),
+    format.json() // Formato JSON para registros estructurados
+  ),
+  transports: [
+    new transports.File({ filename: "logs/error.log", level: "error" }), // Log de errores
+    new transports.File({ filename: "logs/combined.log" }), // Todos los logs
+  ],
+});
+
+//Si no está en producción, agregar salida a consola para desarrollo
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.simple(), // Logs simples para consola
+    })
+  );
+}
+
+module.exports = logger;
+```
+
+Inicialmente, se importan las siguientes funciones de Winston:
+```javascript
+ const { createLogger, format, transports } = require("winston");
+```
+-**createLogger**: Permitirá crear una nueva instancia de logger.
+
+-**format**: Esta función permitirá personalizar el formato de los mensajes de log.
+
+-**transports**: Acá se definen los destinos a donde se enviarán los logs (por ejemplo, archivos o en la consola).
+
+Luego, se crea un logger:
+
+```javascript
+const logger = createLogger({
+  level: "info",
+  format: format.combine(
+    format.timestamp(),
+    format.json() // Formato JSON para registros estructurados
+  ),
+  transports: [
+    new transports.File({ filename: "logs/error.log", level: "error" }), // Log de errores
+    new transports.File({ filename: "logs/combined.log" }), // Todos los logs
+  ],
+});
+```
+
+- **level: "info"** establece que solo se van a registrar mensajes con nivel de severidad "info" o superior, como warn, error, debug.
+- **format: format.combine()** combina dos formatos:
+  - **format.timestamp()**: Esto agregará una marca de tiempo a cada mensaje de log.
+  - **format.json()**: Formatea los mensajes como objetos JSON.
+- **Transports:** Define dónde se guardarán los logs:
+  - **new transports.File({ filename: "logs/error.log", level: "error" })**: Esto crea un archivo error.log para guardar únicamente los mensajes de error.
+  - **new transports.File({ filename: "logs/combined.log" })**: Esto crea un archivo combined.log para guardar todos los mensajes.
+
+Posteriormente, si la aplicación se está ejecutando en un entorno de desarrollo (es decir, la variable de entorno NODE_ENV no es "production"), se agrega un transport adicional para mostrar los logs en la consola. Lo cual es útil para ver los mensajes de log en tiempo real mientras se desarrolla la aplicación:
+
+```javascript
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.simple(), // Logs simples para consola
+    })
+  );
+}
+```
+Así, aquí se está crean un logger de Winston que registra información detallada sobre la ejecución de la aplicación en archivos y, opcionalmente, en la consola. Esto va a permitir tener un mejor control sobre la aplicación y facilitará el mantenimiento.
+
+---
+
+### Integración de Morgan con Winston:
+**Morgan**: Se encarga de registrar información detallada sobre las solicitudes HTTP que llegan a la aplicación.
+
+¿Por qué Morgan?
+1) Proporciona una visión clara de todas las solicitudes que recibe tu aplicación, incluyendo la hora, el método HTTP (GET, POST, etc.), la URL, el código de estado de la respuesta, el tiempo de respuesta y otra información relevante.
+2) Depuración: Al registrar las solicitudes, se pueden identificar fácilmente errores y problemas en la aplicación. Por ejemplo, si una ruta no funciona como se espera, se podrán revisar los logs para ver qué está sucediendo.
+3) Análisis: Los logs generados por Morgan pueden ser utilizados para analizar el comportamiento de la aplicación.
+
+```javascript
+
+//Importando Morgan y Logger
+const morgan = require("morgan");
+const logger = require("./config/logger");
+
+
+//Integración de Morgan con Winston
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()), //Aquí se envían logs de Morgan a Winston
+    },
+  })
+);
+
+```
+- Aquí se está utilizando el middleware de Morgan con el formato "combined". Este formato brindará una gran cantidad de información sobre cada solicitud, como el método HTTP, la URL, el código de estado, el tiempo de respuesta, etc.
+* { stream: ... }:
+   - Este objeto configura la salida de los logs de Morgan.
+   - En lugar de enviar los logs directamente a la consola, se redirigen a un flujo personalizado.
+     
+- Esta línea es la que conecta Morgan con Winston.
+* stream: { write: (message) => logger.info(message.trim()) }
+   - **write**: Esta función se ejecuta cada vez que Morgan tiene un nuevo log.
+   - **message**: Contiene el mensaje de log formateado por Morgan.
+   - **logger.info(message.trim()):** El mensaje se envía al logger de Winston con el nivel de severidad "info". trim() eliminará cualquier espacio en blanco al principio o al final del mensaje.
+ 
+Tener en cuenta lo siguiente:
+- **Morgan** captura los detalles de las solicitudes HTTP, proporcionando una visión clara del tráfico de la aplicación.
+- **Winston** permite personalizar y gestionar esos logs de manera eficiente, enviándolos a diferentes destinos y estableciendo diferentes niveles de detalle.
+
+---
+
+### Despliegue mejorado con Docker Compose
+Actualización del archivo docker-compose.yml para incluir Redis:
+
+```javascript
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./proyecto-autorization
+      dockerfile: Dockerfile.backend
+    env_file:
+      - ./proyecto-autorization/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis #Se agrega Redis como dependencia del backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis: # Configuración del servicio Redis
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  db-data:
+```
+
+---
+
+### Integración de redis en el Backend:
+Aquí se está implementando redis como caché. Se almacenan los datos de acceso frecuente para reducir la carga en la base de datos y acelerar las respuestas. Para ello, se almacenan los resultados de consultas a la base de datos que se realizan con frecuencia, con el objetivo de proporcionar un almacenamiento en memoria rápido y flexible.
+
+```javascript
+//Mediante 'path', indico la ruta en que se encuentra el archivo .env
+require("dotenv").config({ path: "../../.env" });
+
+//Con este cliente de la base de datos podré conectarme
+const { Pool } = require("pg");
+const redis = require("redis");
+
+//Creo un objeto pool para realizar la conexión a PostgreSQL
+const pool = new Pool({
+  user: process.env.DATABASE_USER,
+  host: process.env.DATABASE_HOST,
+  database: process.env.DATABASE_NAME,
+  password: process.env.DATABASE_PASSWORD,
+  port: process.env.DATABASE_PORT,
+});
+
+//Se configura el cliente de Redis
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST || "redis", //Se usa el host configurado o el nombre del servicio en Docker
+  port: process.env.REDIS_PORT || 6379,    //Se usa el puerto configurado o el puerto por defecto 6379
+});
+
+//Manejo de errores en Redis
+redisClient.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+
+//Exporto tanto el cliente de la base de datos como el cliente Redis
+module.exports = { pool, redisClient };
+```
+
+---
+
+### Uso en controladores para cachear datos 
+
+```javascript
+// Handler function para obtener TODOS los recursos con Redis Cache
+const obtenerRecTodo = async (req, res) => {
+  try {
+    // Verifico si los recursos están en la caché de Redis
+    redisClient.get("recursos", async (err, data) => {
+      if (err) {
+        console.error("Error al acceder a Redis:", err);
+        throw err;
+      }
+
+      if (data) {
+        // Si los recursos están en Redis, los envío directamente al cliente
+        console.log("Recursos obtenidos desde Redis Cache");
+        return res.json(JSON.parse(data));
+      } else {
+        // Si no están en Redis, los obtengo desde la base de datos
+        console.log("Recursos no están en Redis. Consultando la base de datos...");
+        const recursos = await recursoModel.obtenerRecurso();
+
+        // Almaceno los recursos en Redis con un tiempo de expiración de 1 hora
+        redisClient.setex("recursos", 3600, JSON.stringify(recursos));
+
+        // Envío los recursos al cliente
+        res.json(recursos);
+      }
+    });
+  } catch (error) {
+    console.error("Error al obtener los recursos:", error);
+    res.status(500).json({ error: "No se pudo obtener los recursos" });
+  }
+};
+```
+
+Aquí primero se verifica si los datos solicitados se encuentran en la caché de Redis.
+Si está, entonces se envían esos datos almacenados en la caché de Redis DIRECTAMENTE al cliente (lo cual reduce la latencia).
+Sin embargo, si NO lo está, entonces se consulta a la base de datos; una vez que se obtiene respuesta, se almacena en la caché de Redis y, posteriormente, se envía la respuesta al cliente.
+
+---
+
+```javascript
+const actualizar = async (req, res) => {
+  console.log("Iniciando controlador de actualización...");
+  try {
+    const { id } = req.params;
+    const { tipo_recurso, configuracion, estado } = req.body.recurso || req.body;
+
+    const recursoActualizado = await recursoModel.actualizarRecurso(id, tipo_recurso, configuracion, estado);
+
+    if (!recursoActualizado) {
+      return res.status(404).json({ error: "Recurso no encontrado." });
+    }
+
+    //Actualizo la caché de Redis para reflejar los cambios
+    redisClient.del("recursos"); //Se eliminan los datos almacenados en caché
+    res.json(recursoActualizado);
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar el recurso. Revisa los logs del servidor." });
+  }
+};
+```
+
+```javascript
+// Handler function para eliminar un recurso
+const eliminar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const respuesta = await recursoModel.eliminarRecurso(id);
+
+    // Elimina la caché después de la operación
+    redisClient.del("recursos");
+
+    res.json(respuesta);
+  } catch (error) {
+    res.status(500).json({ error: "No se puede eliminar el recurso" });
+  }
+};
+```
+
+Para las operaciones de actualización y eliminación de recursos, se usa redis, pero para eliminar los datos anteriores almacenados en caché.
