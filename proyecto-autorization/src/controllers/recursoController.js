@@ -8,14 +8,12 @@ const crear = async (req, res) => {
   const id_usuario = req.usuario.id; // Se obtiene el ID del usuario autenticado
 
   try {
-    console.log("Datos recibidos para crear recurso:", { tipo_recurso, configuracion, estado, id_usuario });
-    
     const nuevoRecurso = await recursoModel.crearRecurso(tipo_recurso, configuracion, estado, id_usuario);
 
     // Eliminar la caché de Redis
     redisClient.del("recursos", (err) => {
-      if (err) console.error("Error al eliminar la caché de Redis tras crear recurso:", err);
-      else console.log("Caché de Redis eliminada tras creación de recurso.");
+      if (err) console.error("Error al eliminar la caché de Redis:", err);
+      else console.log("Caché de Redis eliminada tras creación de recurso");
     });
 
     res.status(201).json(nuevoRecurso);
@@ -28,7 +26,6 @@ const crear = async (req, res) => {
 // Handler function para obtener TODOS los recursos con Redis Cache
 const obtenerRecTodo = async (req, res) => {
   try {
-    console.log("Iniciando función obtenerRecTodo...");
     redisClient.get("recursos", async (err, data) => {
       if (err) {
         console.error("Error al acceder a Redis:", err);
@@ -47,9 +44,15 @@ const obtenerRecTodo = async (req, res) => {
           return res.status(404).json({ error: "No hay recursos disponibles." });
         }
 
+        redisClient.del("recursos", (err) => {
+          if (err) console.error("Error al eliminar la caché de Redis:", err);
+          else console.log("Caché de Redis eliminada correctamente");
+        });
+      
+
         redisClient.setex("recursos", 3600, JSON.stringify(recursos), (err) => {
           if (err) console.error("Error al almacenar datos en Redis:", err);
-          else console.log("Datos almacenados en Redis Cache.");
+          else console.log("Datos almacenados en Redis Cache");
         });
 
         res.json(recursos);
@@ -61,18 +64,12 @@ const obtenerRecTodo = async (req, res) => {
   }
 };
 
+
 // Handler function para obtener un recurso por ID
 const obtenerRecID = async (req, res) => {
   try {
-    console.log("Solicitud para obtener recurso por ID:", req.params.id);
-
     const { id } = req.params;
     const recurso = await recursoModel.obtenerRecursoID(id);
-    if (!recurso) {
-      return res.status(404).json({ error: "Recurso no encontrado." });
-    }
-
-    console.log("Recurso obtenido:", recurso);
     res.json(recurso);
   } catch (error) {
     console.error("Error al obtener el recurso especificado:", error);
@@ -87,8 +84,6 @@ const actualizar = async (req, res) => {
     const { id } = req.params;
     const { tipo_recurso, configuracion, estado } = req.body;
 
-    console.log("Datos recibidos para actualizar recurso:", { id, tipo_recurso, configuracion, estado });
-
     const recursoActualizado = await recursoModel.actualizarRecurso(
       id,
       tipo_recurso,
@@ -102,11 +97,10 @@ const actualizar = async (req, res) => {
 
     // Eliminar la caché para reflejar los cambios
     redisClient.del("recursos", (err) => {
-      if (err) console.error("Error al eliminar la caché de Redis tras actualizar recurso:", err);
-      else console.log("Caché de Redis eliminada tras actualización de recurso.");
+      if (err) console.error("Error al eliminar la caché de Redis:", err);
+      else console.log("Caché de Redis eliminada tras actualización de recurso");
     });
 
-    console.log("Recurso actualizado correctamente:", recursoActualizado);
     res.json(recursoActualizado);
   } catch (error) {
     console.error("Error al actualizar el recurso:", error);
@@ -118,17 +112,14 @@ const actualizar = async (req, res) => {
 const eliminar = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Solicitud para eliminar recurso con ID:", id);
-
     const respuesta = await recursoModel.eliminarRecurso(id);
 
     // Eliminar la caché después de la operación
     redisClient.del("recursos", (err) => {
-      if (err) console.error("Error al eliminar la caché de Redis tras eliminar recurso:", err);
-      else console.log("Caché de Redis eliminada tras eliminación de recurso.");
+      if (err) console.error("Error al eliminar la caché de Redis:", err);
+      else console.log("Caché de Redis eliminada tras eliminación de recurso");
     });
 
-    console.log("Recurso eliminado correctamente:", respuesta);
     res.json(respuesta);
   } catch (error) {
     console.error("Error al eliminar el recurso:", error);
