@@ -657,3 +657,40 @@ services:
 volumes:
   db-data:
 ```
+
+---
+
+### Integración de redis en el Backend:
+Aquí se está implementando redis como caché. Se almacenan los datos de acceso frecuente para reducir la carga en la base de datos y acelerar las respuestas. Para ello, se almacenan los resultados de consultas a la base de datos que se realizan con frecuencia, con el objetivo de proporcionar un almacenamiento en memoria rápido y flexible.
+
+```javascript
+//Mediante 'path', indico la ruta en que se encuentra el archivo .env
+require("dotenv").config({ path: "../../.env" });
+
+//Con este cliente de la base de datos podré conectarme
+const { Pool } = require("pg");
+const redis = require("redis");
+
+//Creo un objeto pool para realizar la conexión a PostgreSQL
+const pool = new Pool({
+  user: process.env.DATABASE_USER,
+  host: process.env.DATABASE_HOST,
+  database: process.env.DATABASE_NAME,
+  password: process.env.DATABASE_PASSWORD,
+  port: process.env.DATABASE_PORT,
+});
+
+//Se configura el cliente de Redis
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST || "redis", //Se usa el host configurado o el nombre del servicio en Docker
+  port: process.env.REDIS_PORT || 6379,    //Se usa el puerto configurado o el puerto por defecto 6379
+});
+
+//Manejo de errores en Redis
+redisClient.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+
+//Exporto tanto el cliente de la base de datos como el cliente Redis
+module.exports = { pool, redisClient };
+```
