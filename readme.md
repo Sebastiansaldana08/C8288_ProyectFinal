@@ -805,4 +805,16 @@ En 2 terminales apartes, ejecutar los siguientes comandos:
    - Ingresar a "frontend", y ejecutar, allí, "npm start".
 
 ### 4) Interacción con la aplicación:
-- Finalmente, en el navegador, el frontend se ejecutará automáticamente por el comando anterior (npm start) y se podrá interactuar con la app. 
+- Finalmente, en el navegador, el frontend se ejecutará automáticamente por el comando anterior (npm start) y se podrá interactuar con la app.
+
+
+-----
+
+### Evidencias:
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen1.png)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen2.png)
+
+![](https://github.com/Sebastiansaldana08/C8288_ProyectFinal/blob/master/Imagenes/Imagen3.png)
+
